@@ -24,4 +24,11 @@ ppmriemer --ifile=input.ppm --pfile=palette.ppm --ofile=output.ppm
 
 BSD 2-Clause "Simplified" License
 
+# Example
 
+![original](example/in.png)
+
+
+Use a [8 color palette](example/p.ppm).
+
+![output](example/out.png)
