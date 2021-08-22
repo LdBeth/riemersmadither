@@ -1,4 +1,6 @@
-# Riemersma dither
+# Riemersma dither, in Chapel
+
+https://chapel-lang.com
 
 See https://www.compuphase.com/riemer.htm
 
@@ -32,3 +34,17 @@ BSD 2-Clause "Simplified" License
 Use a [8 color palette](example/p.ppm).
 
 ![output](example/out.png)
+
+# Dyalog APL version
+
+Compile `gilbert.dylib` by
+
+```
+cc -DAPL -shared -Wl,-install_name,gilbert.dylib -o gilbert.dylib gilbert.c
+```
+
+This APL version handles only PGM files.
+
+```
+   ('P4' 'out.pbm') writepnm⍨ priem (readpnm 'input.pgm')
+```
