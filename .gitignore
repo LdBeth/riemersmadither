@@ -1,2 +1,6 @@
 ppmriemer
 .DS_Store
+*.dylib
+*.so
+*.o
+*.a
