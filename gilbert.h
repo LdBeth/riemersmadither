@@ -1,2 +1,1 @@
-int *gilbert(int width, int height);
-
+void gilbert(int *out, int width, int height);

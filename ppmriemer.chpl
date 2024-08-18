@@ -37,7 +37,7 @@ extern "pm_freearray" proc ppm_freearray(pixels : c_ptr(c_ptr(pixel)),
 
 require "gilbert.h", "gilbert.c";
 
-extern proc gilbert(a : c_int, b : c_int) : c_ptr(c_int);
+extern proc gilbert(o: c_ptr(c_int), a : c_int, b : c_int);
 
 var pcols: c_int = 0;
 var prows: c_int = 0;
@@ -86,12 +86,12 @@ fclose(file);
 
 var idx : [0..#cols, 0..#rows] c_int;
 
-var gl = gilbert(cols,rows);
+var gl = c_calloc(c_int, cols*rows);
+gilbert(gl,cols,rows);
 
-forall (x,y) in {0..#cols, 0..#rows} do
+foreach (x,y) in {0..#cols, 0..#rows} do
   idx(x,y) = gl[x*rows+y];
 
-// writeln(idx);
 c_free(gl);
 
 //writeln("gen curve.");
@@ -114,7 +114,7 @@ var errors : [ED] int(32);
 
 inline proc calc_adj(x : int, y :int) : [RGB] int(32) {
   var a : [RGB] int(32);
-  forall i in 0..#n do
+  foreach i in 0..#n do
     a += (errors[x, y+i, 1..3] * weight[i]) : int(32);
   return a/n;
 }

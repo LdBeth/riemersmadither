@@ -72,33 +72,14 @@ static void generate2d(int x, int y, int ax, int ay, int bx, int by) {
   }
 }
 
-#ifdef APL
-void
-#else
-int *
-#endif
-gilbert(
-#ifdef APL
-int *out,
-#endif
-int width, int height) {
+void gilbert(int *out, int width, int height) {
   bidx = 0;
-  // input = in;
-#ifdef APL
   buffer = out;
-#else
-  int len = width * height;
-  buffer = malloc(len * sizeof(int));
-#endif
   xbase = height;
   if (width >= height) {
     generate2d(0, 0, width, 0, 0, height);
   } else {
     generate2d(0, 0, 0, height, width, 0);
   }
-#ifdef APL
   return;
-#else
-  return buffer;
-#endif
 }
