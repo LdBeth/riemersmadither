@@ -1,6 +1,6 @@
 all: ppmriemer pgmrobust
 
-CHPL = chpl --gmp none --fast
+CHPL = chpl --gmp none -g --fast --vectorize --inline
 
 gilbert.dylib: gilbert.c
 	cc -DAPL -shared -Wl,-install_name,gilbert.dylib -o gilbert.dylib gilbert.c

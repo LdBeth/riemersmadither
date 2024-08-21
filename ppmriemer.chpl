@@ -1,5 +1,4 @@
-use SysCTypes;
-use CPtr;
+use CTypes;
 
 config const ifile, pfile, ofile : string;
 
@@ -11,7 +10,7 @@ if ifile.size == 0 || pfile.size == 0 || ofile.size == 0 then {
 require "netpbm/ppm.h", "-lnetpbm";
 
 extern type FILE;
-extern proc fopen(path : c_string, mode : c_string) : c_ptr(FILE);
+extern proc fopen(path : c_ptrConst(c_char), mode : c_ptrConst(c_char)) : c_ptr(FILE);
 extern proc fclose(stream : c_ptr(FILE)) : c_int;
 
 extern type pixval = c_uint;
@@ -86,13 +85,13 @@ fclose(file);
 
 var idx : [0..#cols, 0..#rows] c_int;
 
-var gl = c_calloc(c_int, cols*rows);
+var gl = allocate(c_int, cols*rows);
 gilbert(gl,cols,rows);
 
 foreach (x,y) in {0..#cols, 0..#rows} do
   idx(x,y) = gl[x*rows+y];
 
-c_free(gl);
+deallocate(gl);
 
 //writeln("gen curve.");
 

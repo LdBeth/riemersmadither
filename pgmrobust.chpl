@@ -1,5 +1,4 @@
-use SysCTypes;
-use CPtr;
+use CTypes;
 
 config const ifile, ofile : string;
 
@@ -13,7 +12,7 @@ config const rad = 10;
 require "netpbm/ppm.h", "-lnetpbm";
 
 extern type FILE;
-extern proc fopen(path : c_string, mode : c_string) : c_ptr(FILE);
+extern proc fopen(path : c_ptrConst(c_char), mode : c_ptrConst(c_char)) : c_ptr(FILE);
 extern proc fclose(stream : c_ptr(FILE)) : c_int;
 
 extern type pixval = c_uint;
