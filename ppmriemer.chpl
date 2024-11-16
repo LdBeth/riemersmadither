@@ -99,13 +99,13 @@ param n : int(32) = 32;
 param r : real = 0.125;
 
 proc init_weight(n : int(32)) {
-  var w : [0..#n] int(32);
+  var w : [0..#n] int(16);
   for i in 0..#n do
-    w[i] = round(r ** (- (i: real(32)) / (n - 1): real(32))) : int(32);
+    w[i] = round(r ** (- (i: real(32)) / (n - 1): real(32))) : int(16);
   return w;
  }
 
-const weight : [0..#n] int(32) = init_weight(n);
+const weight : [0..#n] int(16) = init_weight(n);
 
 const RGB : domain(1) = {1..3};
 const ED : domain(3) = {0..#cols, 0..#(rows+n), 1..3};
