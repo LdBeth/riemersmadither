@@ -40,13 +40,13 @@ int main(int argc, char *argv[]) {
     // Copy the palette row into two arrays:
     // - qpixel: used for the final output lookup
     // - palette: used for distance computations
-    pixel *qpixel = malloc(pcols * sizeof(pixel));
-    pixel *palette = malloc(pcols * sizeof(pixel));
+    pixel *p = malloc(pcols * sizeof(pixel));
     for (int i = 0; i < pcols; i++) {
-        qpixel[i]   = pal[0][i];
-        palette[i]  = pal[0][i];
+        p[i]   = pal[0][i];
     }
     ppm_freearray((void**)pal, prows);
+    pixel const *qpixel = p;
+    pixel const *palette = p;
 
     /* --- Read the input image --- */
     int cols = 0, rows = 0;
@@ -157,8 +157,7 @@ int main(int argc, char *argv[]) {
     /* --- Cleanup --- */
     free(gl);
     free(errors);
-    free(palette);
-    free(qpixel);
+    free(p);
     ppm_freearray((void**)image, rows);
 
     return 0;
