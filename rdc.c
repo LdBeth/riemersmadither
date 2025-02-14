@@ -12,6 +12,10 @@
  */
 #define ERR(errors, cols, rows, n, x, y, c) (errors[((x) * ((rows)+(n)) + (y)) * 3 + (c)])
 
+/* --- Set up parameters for error diffusion --- */
+const static int n = 32;
+const static double r = 0.125;
+
 int main(int argc, char *argv[]) {
     if (argc < 4) {
         fprintf(stderr, "ifile pfile ofile\n");
@@ -70,9 +74,6 @@ int main(int argc, char *argv[]) {
     // In the Chapel code an index array idx[x][y] is built as: idx(x,y) = gl[x*rows+y]
     // Here we use gl directly with the same indexing.
 
-    /* --- Set up parameters for error diffusion --- */
-    const int n = 32;
-    const double r = 0.125;
     int weight[n];
     for (int i = 0; i < n; i++) {
         weight[i] = (int)round(pow(r, -((double)i / (n - 1))));
@@ -144,6 +145,9 @@ int main(int argc, char *argv[]) {
             }
         }
     }
+    free(gl);
+    free(errors);
+    free(p);
 
     /* --- Write out the resulting image --- */
     fp = fopen(ofile, "w");
@@ -153,11 +157,6 @@ int main(int argc, char *argv[]) {
     }
     ppm_writeppm(fp, image, cols, rows, maxval, 0);
     fclose(fp);
-
-    /* --- Cleanup --- */
-    free(gl);
-    free(errors);
-    free(p);
     ppm_freearray((void**)image, rows);
 
     return 0;
