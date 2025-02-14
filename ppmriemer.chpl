@@ -130,7 +130,7 @@ forall x in 0..#cols {
     // quant
     const a : [DPX] int(32) = forall i in DPX do
       // [2,4,3] if prefers blue
-    ((+ reduce ([3,4,2] * (palette[i, 1..3] - q) ** 2))** 0.5): int(32);
+    sqrt(+ reduce ([3,4,2] * (palette[i, 1..3] - q) ** 2)): int(32);
     const (min,i) = minloc reduce zip(a, DPX);
     image[k][j] = qpixel[i];
     const err = for a in RGB do (rgb[a]-palette[i, a]) : int(32);
