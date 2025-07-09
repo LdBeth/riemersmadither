@@ -11,7 +11,7 @@ gilbert.dylib: gilbert.c
 ppmrimer: gilbert.c gilbert.h
 
 rdc: rdc.c
-	cc -Ofast -ffast-math -flto -Wall -march=native -o rdc -I/opt/pkg/include -L/opt/pkg/lib rdc.c gilbert.c -lnetpbm
+	cc -O3 -ffast-math -flto -Wall -march=native -o rdc -I/opt/pkg/include -L/opt/pkg/lib rdc.c gilbert.c -lnetpbm
 
 .PHONY: clean
 clean:
