@@ -1,4 +1,4 @@
-all: ppmriemer pgmrobust
+all: rdc part quant # ppmriemer pgmrobust
 
 CHPL = chpl --gmp none -g --fast --vectorize --inline
 
@@ -15,6 +15,9 @@ rdc: rdc.c
 
 part: W.c
 	cc -O3 -ffast-math -flto -Wall -march=native -o part -I/opt/pkg/include -L/opt/pkg/lib W.c -lnetpbm
+
+quant: neuquant.c
+	cc -O3 -ffast-math -flto -Wall -march=native -o quant -I/opt/pkg/include -L/opt/pkg/lib neuquant.c -lnetpbm
 
 .PHONY: clean
 clean:
