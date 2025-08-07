@@ -28,8 +28,8 @@ int main(int argc, char *argv[]) {
     const char *ofile = argv[3];
 
     /* --- Read the palette image --- */
-    int pcols = 0, prows = 0;
-    pixval pmaxval = 0;
+    int pcols, prows;
+    pixval pmaxval;
     FILE *fp = fopen(pfile, "r");
     if (!fp) {
         fprintf(stderr, "Error opening palette file '%s'\n", pfile);
@@ -55,8 +55,8 @@ int main(int argc, char *argv[]) {
     pixel const *palette = p;
 
     /* --- Read the input image --- */
-    int cols = 0, rows = 0;
-    pixval maxval = 0;
+    int cols, rows;
+    pixval maxval;
     fp = fopen(ifile, "r");
     if (!fp) {
         fprintf(stderr, "Error opening input file '%s'\n", ifile);
@@ -79,7 +79,7 @@ int main(int argc, char *argv[]) {
 
     int weight[n];
     for (int i = 0; i < n; i++) {
-        weight[i] = (int)round(pow(r, -((double)i / (n - 1))));
+        weight[i] = (int)lround(pow(r, -((double)i / (n - 1))));
     }
 
     /* Allocate errors array with dimensions: [cols][rows+n][3] */
