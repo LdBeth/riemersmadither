@@ -10,9 +10,9 @@
  * We allocate errors as a 1D array of size: cols * (rows+n) * 3,
  * where errors[x][y][c] is at index: x * ((rows+n)*3) + y*3 + c.
  */
-#define ERR(cols, rows, n, x, y, c) (errors[((x) * ((rows)+(n)) + (y)) * 3 + (c)])
-typedef unsigned char RGB_t;
-typedef short ERR_t;
+#define ERR(x, y, c) (errors[((x) * (rows+(n)) + (y)) * 3 + (c)])
+typedef unsigned short RGB_t;
+typedef int ERR_t;
 
 /* --- Set up parameters for error diffusion --- */
 const static int n = 32;
@@ -106,16 +106,12 @@ int main(int argc, char *argv[]) {
             ERR_t adj[3] = {0, 0, 0};
             for (int i = 0; i < n; i++) {
                 for (int c = 0; c < 3; c++) {
-                    adj[c] += ERR(cols, rows, n, x, y + i, c) * weight[i];
+                    adj[c] += ERR(x, y + i, c) * weight[i];
                 }
             }
-            for (int c = 0; c < 3; c++) {
-                adj[c] /= n;
-            }
-
             ERR_t q[3];
             for (int c = 0; c < 3; c++) {
-                q[c] = rgb[c] + adj[c];
+              q[c] = rgb[c] + (adj[c] / n);
             }
 
             /* Find the best palette match for q using a weighted distance:
@@ -143,7 +139,7 @@ int main(int argc, char *argv[]) {
             err[1] = rgb[1] - palette[best_index].g;
             err[2] = rgb[2] - palette[best_index].b;
             for (size_t c = 0; c < 3; c++) {
-                ERR(cols, rows, n, x, y + n, c) = err[c];
+                ERR(x, y + n, c) = err[c];
             }
         }
     }
