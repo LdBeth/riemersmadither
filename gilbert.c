@@ -2,17 +2,26 @@
 #include <stdlib.h>
 #include <string.h>
 
-static int *buffer;
+static int *bufferX;
+static int *bufferY;
 // static int *input;
 static int bidx;
 static int xbase;
+static void (*writeid)(int, int);
 
 static int sign(int x) {
   return (x > 0) - (x < 0);
 }
 
-static void writeidx(int x, int y){
-  buffer[bidx] = x * xbase + y;
+static void writeidx1(int x, int y){
+  bufferX[bidx] = x * xbase + y;
+  bidx++;
+  return;
+}
+
+static void writeidx2(int x, int y){
+  bufferX[bidx] = x;
+  bufferY[bidx] = y;
   bidx++;
   return;
 }
@@ -27,7 +36,7 @@ static void generate2d(int x, int y, int ax, int ay, int bx, int by) {
 
   if (h == 1) {
     for (int i = 0; i < w; i++){
-      writeidx(x, y);
+      writeid(x, y);
       x += dax;
       y += day;
     }
@@ -36,7 +45,7 @@ static void generate2d(int x, int y, int ax, int ay, int bx, int by) {
 
   if (w == 1) {
     for (int i = 0; i < h; i++){
-      writeidx(x, y);
+      writeid(x, y);
       x += dbx;
       y += dby;
     }
@@ -74,8 +83,22 @@ static void generate2d(int x, int y, int ax, int ay, int bx, int by) {
 
 void gilbert(int *out, int width, int height) {
   bidx = 0;
-  buffer = out;
+  bufferX = out;
   xbase = height;
+  writeid = writeidx1;
+  if (width >= height) {
+    generate2d(0, 0, width, 0, 0, height);
+  } else {
+    generate2d(0, 0, 0, height, width, 0);
+  }
+  return;
+}
+
+void gilbert2(int * restrict outX, int * restrict outY, int width, int height) {
+  bidx = 0;
+  bufferX = outX;
+  bufferY = outY;
+  writeid = writeidx2;
   if (width >= height) {
     generate2d(0, 0, width, 0, 0, height);
   } else {

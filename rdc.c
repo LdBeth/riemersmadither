@@ -20,7 +20,7 @@ const static double r = 0.125;
 
 int main(int argc, char *argv[]) {
     if (argc < 4) {
-        fprintf(stderr, "ifile pfile ofile\n");
+        fprintf(stderr, "Usage: ifile pfile ofile\n");
         return 1;
     }
     const char *ifile = argv[1];
@@ -71,8 +71,9 @@ int main(int argc, char *argv[]) {
 
     /* --- Generate the Gilbert ordering --- */
     int totalPixels = cols * rows;
-    int *gl = malloc(totalPixels * sizeof(int));
-    gilbert(gl, cols, rows);
+    int *glx = malloc(totalPixels * sizeof(int));
+    int *gly = malloc(totalPixels * sizeof(int));
+    gilbert2(glx, gly, cols, rows);
     // In the Chapel code an index array idx[x][y] is built as: idx(x,y) = gl[x*rows+y]
     // Here we use gl directly with the same indexing.
 
@@ -93,9 +94,8 @@ int main(int argc, char *argv[]) {
     for (size_t x = 0; x < cols; x++) {
         for (size_t y = 0; y < rows; y++) {
             // Get the ordering index from gl
-            size_t loc = gl[x * rows + y];
-            size_t j = loc / rows;  // column index in the image
-            size_t k = loc % rows;  // row index in the image
+            size_t j = glx[x * rows + y];  // column index in the image
+            size_t k = gly[x * rows + y];  // row index in the image
 
             pixel pix = image[k][j];
             RGB_t rgb[3] = { pix.r, pix.g, pix.b };
@@ -143,7 +143,7 @@ int main(int argc, char *argv[]) {
             }
         }
     }
-    free(gl);
+    free(glx); free(gly);
     free(errors);
     free(p);
 
