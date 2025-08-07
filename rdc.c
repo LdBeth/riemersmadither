@@ -10,7 +10,9 @@
  * We allocate errors as a 1D array of size: cols * (rows+n) * 3,
  * where errors[x][y][c] is at index: x * ((rows+n)*3) + y*3 + c.
  */
-#define ERR(errors, cols, rows, n, x, y, c) (errors[((x) * ((rows)+(n)) + (y)) * 3 + (c)])
+#define ERR(cols, rows, n, x, y, c) (errors[((x) * ((rows)+(n)) + (y)) * 3 + (c)])
+typedef unsigned char RGB_t;
+typedef short ERR_t;
 
 /* --- Set up parameters for error diffusion --- */
 const static int n = 32;
@@ -80,38 +82,38 @@ int main(int argc, char *argv[]) {
     }
 
     /* Allocate errors array with dimensions: [cols][rows+n][3] */
-    int errors_size = cols * (rows + n) * 3;
-    int *errors = calloc(errors_size, sizeof(int));
+    size_t errors_size = cols * (rows + n) * 3;
+    ERR_t *errors = calloc(errors_size, sizeof(ERR_t));
     if (!errors) {
         fprintf(stderr, "Allocation error for errors array\n");
         return 1;
     }
 
     /* --- Process each pixel in the gilbert order --- */
-    for (int x = 0; x < cols; x++) {
-        for (int y = 0; y < rows; y++) {
+    for (size_t x = 0; x < cols; x++) {
+        for (size_t y = 0; y < rows; y++) {
             // Get the ordering index from gl
-            int loc = gl[x * rows + y];
-            int j = loc / rows;  // column index in the image
-            int k = loc % rows;  // row index in the image
+            size_t loc = gl[x * rows + y];
+            size_t j = loc / rows;  // column index in the image
+            size_t k = loc % rows;  // row index in the image
 
             pixel pix = image[k][j];
-            int rgb[3] = { (int)pix.r, (int)pix.g, (int)pix.b };
+            RGB_t rgb[3] = { pix.r, pix.g, pix.b };
 
             /* Calculate adjustment from errors:
                For each color channel, sum over i=0..n-1: errors[x][y+i][c] * weight[i],
                then divide by n. */
-            int adj[3] = {0, 0, 0};
+            ERR_t adj[3] = {0, 0, 0};
             for (int i = 0; i < n; i++) {
                 for (int c = 0; c < 3; c++) {
-                    adj[c] += ERR(errors, cols, rows, n, x, y + i, c) * weight[i];
+                    adj[c] += ERR(cols, rows, n, x, y + i, c) * weight[i];
                 }
             }
             for (int c = 0; c < 3; c++) {
                 adj[c] /= n;
             }
 
-            int q[3];
+            ERR_t q[3];
             for (int c = 0; c < 3; c++) {
                 q[c] = rgb[c] + adj[c];
             }
@@ -119,12 +121,12 @@ int main(int argc, char *argv[]) {
             /* Find the best palette match for q using a weighted distance:
                distance = sqrt( 3*(dr)^2 + 4*(dg)^2 + 2*(db)^2 )
                (Note: for minimization, the square root can be omitted.) */
-            int best_index = 0;
+            size_t best_index = 0;
             int min_distance = INT_MAX;
-            for (int i = 0; i < pcols; i++) {
-                int dr = (int)palette[i].r - q[0];
-                int dg = (int)palette[i].g - q[1];
-                int db = (int)palette[i].b - q[2];
+            for (size_t i = 0; i < pcols; i++) {
+                int dr = palette[i].r - q[0];
+                int dg = palette[i].g - q[1];
+                int db = palette[i].b - q[2];
                 int dist_sq = 3 * dr * dr + 4 * dg * dg + 2 * db * db;
                 if (dist_sq < min_distance) {
                     min_distance = dist_sq;
@@ -136,12 +138,12 @@ int main(int argc, char *argv[]) {
             image[k][j] = qpixel[best_index];
 
             // Compute the error for each channel and store it in errors[x][y+n]
-            int err[3];
-            err[0] = rgb[0] - (int)palette[best_index].r;
-            err[1] = rgb[1] - (int)palette[best_index].g;
-            err[2] = rgb[2] - (int)palette[best_index].b;
-            for (int c = 0; c < 3; c++) {
-                ERR(errors, cols, rows, n, x, y + n, c) = err[c];
+            ERR_t err[3];
+            err[0] = rgb[0] - palette[best_index].r;
+            err[1] = rgb[1] - palette[best_index].g;
+            err[2] = rgb[2] - palette[best_index].b;
+            for (size_t c = 0; c < 3; c++) {
+                ERR(cols, rows, n, x, y + n, c) = err[c];
             }
         }
     }
