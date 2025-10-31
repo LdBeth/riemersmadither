@@ -15,7 +15,7 @@ typedef unsigned short RGB_t;
 typedef int ERR_t;
 
 /* --- Set up parameters for error diffusion --- */
-const static int n = 32;
+enum { n = 32 };
 const static double r = 0.125;
 
 int main(int argc, char *argv[]) {

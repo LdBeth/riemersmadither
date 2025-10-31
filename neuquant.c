@@ -21,8 +21,6 @@
 
 typedef struct {
     int r, g, b;
-    int freq;
-    int bias;
 } neuron_t;
 
 int NET_SIZE;
@@ -35,8 +33,6 @@ void init_net() {
         network[i].r = (i << 12) / NET_SIZE;
         network[i].g = (i << 12) / NET_SIZE;
         network[i].b = (i << 12) / NET_SIZE;
-        network[i].freq = 1 << 16 / NET_SIZE;
-        network[i].bias = 0;
     }
 }
 
